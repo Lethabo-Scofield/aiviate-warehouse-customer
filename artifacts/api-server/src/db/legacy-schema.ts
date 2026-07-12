@@ -1,6 +1,28 @@
 import { pool } from "../lib/pool";
 
+// Serializes startup schema setup across concurrently starting server
+// instances (shared external DB) to avoid migration deadlocks.
+const SCHEMA_SETUP_LOCK_KEY = 727274001;
+
 export const createSchema = async () => {
+  const lockClient = await pool.connect();
+  try {
+    await lockClient.query("SELECT pg_advisory_lock($1)", [
+      SCHEMA_SETUP_LOCK_KEY,
+    ]);
+    await runSchemaSetup();
+  } finally {
+    try {
+      await lockClient.query("SELECT pg_advisory_unlock($1)", [
+        SCHEMA_SETUP_LOCK_KEY,
+      ]);
+    } finally {
+      lockClient.release();
+    }
+  }
+};
+
+const runSchemaSetup = async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id BIGSERIAL PRIMARY KEY,

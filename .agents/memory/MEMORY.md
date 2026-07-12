@@ -1,0 +1,1 @@
+- [Shared external DB startup](shared-db-startup.md) — API targets the owner's shared Postgres; startup schema setup must stay inside the advisory-locked path and stay admin-app compatible.

@@ -1,6 +1,6 @@
 # BulkMart Pro
 
-Wholesale grocery e-commerce app: buyers register, browse a bulk product catalog, add to cart, check out with a map-based address picker and simulated payment, and track order history.
+Single-user wholesale grocery storefront: the store opens directly (no login screen — the app silently signs in with a built-in store account), the buyer browses a bulk product catalog, adds to cart, checks out with a map-based address picker and simulated payment, and tracks order history. Orders are written to the owner's shared external database so a separate admin app can read the same tables.
 
 ## Run & Operate
 
@@ -8,7 +8,7 @@ Wholesale grocery e-commerce app: buyers register, browse a bulk product catalog
 - `pnpm --filter @workspace/warehouse-ecommerce run dev` — run the web frontend (Vite)
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string; `JWT_SECRET` or `SESSION_SECRET` required in production (JWT signing)
+- Required env: `STORE_DATABASE_URL` — the owner's shared Postgres database (preferred; also read by their admin app); falls back to `DATABASE_URL` (built-in Replit DB). `JWT_SECRET` or `SESSION_SECRET` required in production (JWT signing)
 
 ## Stack
 
@@ -36,13 +36,17 @@ Wholesale grocery e-commerce app: buyers register, browse a bulk product catalog
 
 ## Product
 
-- Buyer registration/login (JWT), product catalog with search and category filters, cart, checkout with leaflet map address picker, simulated payment modal, order history with status timeline
+- Open storefront (no login UI): frontend auto-signs-in with the store account (demo@bulkmart.com, seeded on startup); backend JWT auth routes still exist and are used silently
+- Product catalog with search and category filters, cart, checkout with leaflet map address picker, simulated payment modal, order history with status timeline
 
 ## User preferences
 
 _Populate as you build — explicit user instructions worth remembering across sessions._
 
 ## Gotchas
+
+- The API writes to the external `STORE_DATABASE_URL` database; schema create + seed run on startup against it (idempotent, IF NOT EXISTS). Concurrent server starts can deadlock on the startup migration — restart once if that happens.
+- Orders placed by the open storefront belong to the seeded store user; the admin side reads the same `orders`/`order_items` tables.
 
 - Legacy endpoints use raw SQL against tables created by `legacy-schema.ts`, not the Drizzle schema in `@workspace/db`
 - `/auth` and `/orders` are mounted at the root (not under `/api`) — artifact service paths must include them
