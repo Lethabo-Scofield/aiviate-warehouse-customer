@@ -3,6 +3,10 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const AuthContext = createContext();
 const API_URL = '';
 
+// Single-user store: the app signs in automatically with the store account.
+const STORE_EMAIL = 'demo@bulkmart.com';
+const STORE_PASSWORD = 'demo1234';
+
 const parseError = async (response) => {
   const body = await response.json().catch(() => ({}));
   return body.error || body.message || `Request failed (${response.status})`;
@@ -14,38 +18,51 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Check for existing session on mount and validate token.
+  // Restore an existing session if present; otherwise sign in silently
+  // with the store account (open store, no login screen).
   useEffect(() => {
-    const restoreSession = async () => {
+    const bootstrap = async () => {
+      setIsLoading(true);
+
       const token = localStorage.getItem('authToken');
       const userData = localStorage.getItem('userData');
 
-      if (!token || !userData) {
-        return;
+      if (token && userData) {
+        try {
+          const response = await fetch(`${API_URL}/auth/me`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Session expired');
+          }
+
+          const data = await response.json();
+          setUser(data.user);
+          setIsAuthenticated(true);
+          setIsLoading(false);
+          return;
+        } catch (e) {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userData');
+        }
       }
 
       try {
-        const response = await fetch(`${API_URL}/auth/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Session expired');
-        }
-
-        const data = await response.json();
-        setUser(data.user);
-        setIsAuthenticated(true);
+        await login(STORE_EMAIL, STORE_PASSWORD);
       } catch (e) {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userData');
+        // login() already records the error for display.
       }
     };
 
-    restoreSession();
+    bootstrap();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Retry hook for the automatic store sign-in.
+  const autoLogin = () => login(STORE_EMAIL, STORE_PASSWORD);
 
   // Login against backend API.
   const login = async (email, password) => {
@@ -166,7 +183,8 @@ export const AuthProvider = ({ children }) => {
       login,
       register,
       logout,
-      updateUser
+      updateUser,
+      autoLogin
     }}>
       {children}
     </AuthContext.Provider>

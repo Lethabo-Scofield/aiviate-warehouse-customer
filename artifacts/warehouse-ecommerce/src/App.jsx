@@ -15,7 +15,7 @@ import { FaExclamationTriangle, FaInfoCircle } from 'react-icons/fa';
 
 // Main App Content (Protected)
 function AppContent() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { products, loading, error, categories, searchProducts, refetch } = useProducts();
   const { orders, addOrder, updateOrderAddress } = useOrders();
   const [cart, setCart] = useState({});
@@ -252,8 +252,6 @@ function AppContent() {
         cartCount={cartCount} 
         onNavigate={handleNavigate}
         currentPage={currentPage}
-        user={user}
-        onLogout={logout}
       />
 
       <main className="flex-1 container-custom py-6">

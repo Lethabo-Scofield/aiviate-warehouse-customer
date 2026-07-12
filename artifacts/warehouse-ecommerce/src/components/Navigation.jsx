@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { FaShoppingCart, FaUser, FaSignOutAlt, FaBars, FaTimes, FaBoxOpen, FaClipboardList } from 'react-icons/fa';
+import { FaShoppingCart, FaBars, FaTimes, FaBoxOpen, FaClipboardList } from 'react-icons/fa';
 
-const Navigation = ({ cartCount, onNavigate, currentPage, user, onLogout }) => {
+const Navigation = ({ cartCount, onNavigate, currentPage }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const navItems = [
     { id: 'home', label: 'Catalog', icon: FaBoxOpen },
@@ -13,7 +12,6 @@ const Navigation = ({ cartCount, onNavigate, currentPage, user, onLogout }) => {
   const handleNavClick = (pageId) => {
     onNavigate(pageId);
     setIsMobileMenuOpen(false);
-    setIsUserMenuOpen(false);
   };
 
   return (
@@ -72,45 +70,6 @@ const Navigation = ({ cartCount, onNavigate, currentPage, user, onLogout }) => {
                 </span>
               )}
             </button>
-
-            <div className="w-px h-6 bg-brand-800 mx-2"></div>
-
-            {/* User Menu */}
-            <div className="relative">
-              <button
-                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center gap-2 px-3 py-2 rounded hover:bg-brand-800 transition-colors"
-              >
-                <div className="w-8 h-8 rounded bg-gray-200 text-brand-900 flex items-center justify-center font-bold text-sm">
-                  {user?.name?.[0] || 'U'}
-                </div>
-                <div className="text-left hidden lg:block">
-                  <p className="text-sm font-bold leading-tight">{user?.name || 'User'}</p>
-                  <p className="text-xs text-gray-400 font-medium">{user?.company || 'Store Account'}</p>
-                </div>
-                <i className="fas fa-chevron-down text-xs text-gray-400 ml-1"></i>
-              </button>
-
-              {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded border border-gray-200 shadow-xl overflow-hidden text-gray-800">
-                  <div className="p-3 border-b border-gray-100 bg-gray-50">
-                    <p className="font-bold text-sm">{user?.name}</p>
-                    <p className="text-xs text-gray-500">{user?.email}</p>
-                  </div>
-                  <div className="p-1">
-                    <button
-                      onClick={() => {
-                        onLogout();
-                        setIsUserMenuOpen(false);
-                      }}
-                      className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 rounded"
-                    >
-                      <FaSignOutAlt /> Sign Out
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -156,27 +115,6 @@ const Navigation = ({ cartCount, onNavigate, currentPage, user, onLogout }) => {
                   </span>
                 )}
               </button>
-              
-              <div className="border-t border-brand-800 mt-2 pt-2">
-                <div className="px-4 py-2 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded bg-gray-200 text-brand-900 flex items-center justify-center font-bold">
-                    {user?.name?.[0] || 'U'}
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm text-white">{user?.name || 'User'}</p>
-                    <p className="text-xs text-gray-400">{user?.email || 'user@example.com'}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    onLogout();
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="w-full mt-1 flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-400 hover:bg-brand-800"
-                >
-                  <FaSignOutAlt /> Sign Out
-                </button>
-              </div>
             </div>
           </div>
         )}
