@@ -47,3 +47,6 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Vercel serverless prebuilt bundle (generated at build time)
+api/_lib/server-bundle.cjs

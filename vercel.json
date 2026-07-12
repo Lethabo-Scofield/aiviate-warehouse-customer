@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm --filter @workspace/warehouse-ecommerce run build",
+  "buildCommand": "pnpm --filter @workspace/warehouse-ecommerce run build && pnpm exec esbuild api/_lib/entry.ts --bundle --platform=node --format=cjs --outfile=api/_lib/server-bundle.cjs --external:pg-native",
   "outputDirectory": "artifacts/warehouse-ecommerce/dist/public",
   "rewrites": [
     { "source": "/auth/:path*", "destination": "/api/auth/:path*" },

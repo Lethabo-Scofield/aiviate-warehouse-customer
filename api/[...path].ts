@@ -3,9 +3,16 @@
 // /api/auth/* and /api/orders* so they land here too. The Express app mounts
 // routes at /auth, /orders and /api, so we strip the /api prefix that the
 // rewrite added for those two.
-import app from "../artifacts/api-server/src/app";
-import { createSchema } from "../artifacts/api-server/src/db/legacy-schema";
-import { seedDatabase } from "../artifacts/api-server/src/db/legacy-seed";
+//
+// The server code is pre-bundled into ./_lib/server-bundle.cjs by the
+// buildCommand in vercel.json (esbuild, single CJS file) to avoid ESM/CJS
+// module-format conflicts between the monorepo packages and this function.
+declare function require(id: string): any;
+
+const bundle = require("./_lib/server-bundle.cjs");
+const app = bundle.app;
+const createSchema = bundle.createSchema;
+const seedDatabase = bundle.seedDatabase;
 
 let ready: Promise<void> | null = null;
 
@@ -14,7 +21,7 @@ function ensureReady(): Promise<void> {
     ready = (async () => {
       await createSchema();
       await seedDatabase();
-    })().catch((err) => {
+    })().catch((err: unknown) => {
       ready = null;
       throw err;
     });
@@ -27,5 +34,5 @@ export default async function handler(req: any, res: any) {
   if (typeof req.url === "string") {
     req.url = req.url.replace(/^\/api(?=\/(auth|orders)(\/|\?|$))/, "");
   }
-  return (app as unknown as (req: any, res: any) => void)(req, res);
+  return app(req, res);
 }
