@@ -27,5 +27,5 @@ export default async function handler(req: any, res: any) {
   if (typeof req.url === "string") {
     req.url = req.url.replace(/^\/api(?=\/(auth|orders)(\/|\?|$))/, "");
   }
-  return app(req, res);
+  return (app as unknown as (req: any, res: any) => void)(req, res);
 }
