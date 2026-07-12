@@ -1,5 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import { createSchema } from "./db/legacy-schema";
+import { seedDatabase } from "./db/legacy-seed";
 
 const rawPort = process.env["PORT"];
 
@@ -15,11 +17,23 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-app.listen(port, (err) => {
-  if (err) {
-    logger.error({ err }, "Error listening on port");
+const start = async () => {
+  try {
+    await createSchema();
+    await seedDatabase();
+  } catch (error) {
+    logger.error({ err: error }, "Database setup failed");
     process.exit(1);
   }
 
-  logger.info({ port }, "Server listening");
-});
+  app.listen(port, (err) => {
+    if (err) {
+      logger.error({ err }, "Error listening on port");
+      process.exit(1);
+    }
+
+    logger.info({ port }, "Server listening");
+  });
+};
+
+start();

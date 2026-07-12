@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #f7f7f5;
+  --surface: #ffffff;
+  --surface-soft: #f8faf9;
+  --text: #122025;
+  --muted: #5d7079;
+  --brand-1: #0f766e;
+  --brand-2: #155e75;
+  --accent: #d97706;
+  --border: #dde7e5;
+  --ring: rgba(15, 118, 110, 0.2);
+  --shadow-sm: 0 6px 20px rgba(11, 25, 30, 0.06);
+  --shadow-md: 0 18px 40px rgba(11, 25, 30, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Manrope', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(15, 118, 110, 0.1), transparent 34%),
+    radial-gradient(circle at 92% 12%, rgba(217, 119, 6, 0.09), transparent 26%),
+    linear-gradient(180deg, #f9fbfa 0%, var(--bg) 100%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container-custom {
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-custom {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-custom {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(115deg, #0f766e 0%, #0e7490 42%, #c2410c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.card-hover {
+  transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+  border: 1px solid rgba(221, 231, 229, 0.7);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(15, 118, 110, 0.25);
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  outline: none;
+  background: var(--surface-soft);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.input-field:focus {
+  border-color: rgba(15, 118, 110, 0.45);
+  background: var(--surface);
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+.btn-primary,
+.btn-gradient,
+.btn-success-gradient {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.35rem;
+  background: linear-gradient(120deg, var(--brand-1) 0%, var(--brand-2) 75%);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.btn-primary:hover,
+.btn-gradient:hover,
+.btn-success-gradient:hover {
+  transform: translateY(-1px);
+  filter: saturate(1.08);
+  box-shadow: 0 14px 30px rgba(14, 116, 144, 0.26);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.payment-card {
+  background: #fff;
+  border-color: var(--border);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.payment-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(15, 118, 110, 0.35);
+  box-shadow: var(--shadow-sm);
+}
+
+.payment-card.selected {
+  border-color: rgba(15, 118, 110, 0.5);
+  background: linear-gradient(180deg, #f0fbf9 0%, #ffffff 100%);
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+.modal-overlay {
+  background: rgba(3, 7, 18, 0.45);
+  backdrop-filter: blur(3px);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-hide::-webkit-scrollbar-track {
+  background: #eef3f2;
+  border-radius: 10px;
+}
+
+.scrollbar-hide::-webkit-scrollbar-thumb {
+  background: linear-gradient(120deg, #0f766e 0%, #155e75 100%);
+  border-radius: 10px;
+}
+
+.scrollbar-hide::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(120deg, #115e59 0%, #164e63 100%);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.45s ease;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.45s ease;
+}

@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "BulkMart Pro"
+version = "1.0.0"
+id = "artifacts/warehouse-ecommerce"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20961
+
+[services.development]
+run = "pnpm --filter @workspace/warehouse-ecommerce run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/warehouse-ecommerce", "run", "build" ]
+publicDir = "artifacts/warehouse-ecommerce/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20961"
+BASE_PATH = "/"
