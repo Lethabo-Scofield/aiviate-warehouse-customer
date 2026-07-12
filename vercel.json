@@ -2,6 +2,9 @@
   "buildCommand": "pnpm --filter @workspace/warehouse-ecommerce run build",
   "outputDirectory": "artifacts/warehouse-ecommerce/dist/public",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/auth/:path*", "destination": "/api/auth/:path*" },
+    { "source": "/orders", "destination": "/api/orders" },
+    { "source": "/orders/:path*", "destination": "/api/orders/:path*" },
+    { "source": "/:path((?!api($|/)).*)", "destination": "/index.html" }
   ]
 }

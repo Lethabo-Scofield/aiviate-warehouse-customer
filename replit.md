@@ -52,6 +52,13 @@ _Populate as you build — explicit user instructions worth remembering across s
 - `/auth` and `/orders` are mounted at the root (not under `/api`) — artifact service paths must include them
 - Frontend is `.jsx` and excluded from strict typechecking; don't run root-level typecheck expecting it to cover the ported UI
 
+## Vercel deployment
+
+- `vercel.json` + `api/[...path].ts` host the whole app on Vercel: static frontend from `artifacts/warehouse-ecommerce/dist/public`, Express API wrapped as a serverless catch-all function
+- Rewrites forward `/auth/*` and `/orders*` to `/api/auth/*` / `/api/orders*` (Vercel rewrites replace `req.url` with the destination path — a bare `/api` destination loses the path); the handler strips the added `/api` prefix before delegating to Express
+- Schema+seed run lazily once per cold start (memoized, advisory-locked)
+- Vercel env vars required: `STORE_DATABASE_URL`, `SESSION_SECRET` (JWT signing; production refuses to start without it)
+
 ## Pointers
 
 - See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
