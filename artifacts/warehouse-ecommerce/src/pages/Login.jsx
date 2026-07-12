@@ -59,6 +59,16 @@ const Login = ({ onLogin, onRegister, isLoading, error }) => {
     }
   };
 
+  const handleDemoLogin = () => {
+    if (isLoading) return;
+    setFormData(prev => ({
+      ...prev,
+      email: 'demo@bulkmart.com',
+      password: 'demo1234'
+    }));
+    onLogin('demo@bulkmart.com', 'demo1234');
+  };
+
   const toggleMode = () => {
     setIsLogin(!isLogin);
     setFormData({
@@ -263,6 +273,16 @@ const Login = ({ onLogin, onRegister, isLoading, error }) => {
             ) : (
               isLogin ? 'Access Dashboard' : 'Create Account'
             )}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            disabled={isLoading}
+            className="w-full rounded-xl border border-teal-200 bg-teal-50 py-3 text-sm font-semibold text-teal-800 transition hover:border-teal-300 hover:bg-teal-100 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <i className="fas fa-bolt mr-2"></i>
+            Try the demo account
           </button>
 
           <div className="relative my-4">

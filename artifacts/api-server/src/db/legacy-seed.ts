@@ -1,4 +1,13 @@
+import bcrypt from "bcryptjs";
 import { pool } from "../lib/pool";
+
+const demoUser = {
+  name: "Demo Buyer",
+  company: "Demo Supermarket",
+  phone: "+27 00 000 0000",
+  email: "demo@bulkmart.com",
+  password: "demo1234",
+};
 
 const defaultCategories = [
   { name: 'Beverages', slug: 'beverages' },
@@ -47,6 +56,21 @@ const defaultProducts = [
 ];
 
 export const seedDatabase = async () => {
+  const existingDemo = await pool.query(
+    "SELECT id FROM users WHERE email = $1",
+    [demoUser.email]
+  );
+
+  if (existingDemo.rows.length === 0) {
+    const passwordHash = await bcrypt.hash(demoUser.password, 10);
+    await pool.query(
+      `INSERT INTO users (name, company, phone, email, password_hash)
+       VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (email) DO NOTHING`,
+      [demoUser.name, demoUser.company, demoUser.phone, demoUser.email, passwordHash]
+    );
+  }
+
   for (const category of defaultCategories) {
     await pool.query(
       `INSERT INTO categories (name, slug)
