@@ -43,7 +43,7 @@ const ProductCard = ({ product, onAddToCart, cartQuantity }) => {
             </span>
           )}
         </div>
-        {product.stock && product.stock < 50 && (
+        {product.stock && product.stock < 15 && (
           <span className="absolute top-2 right-2 bg-red-100 text-red-800 border border-red-200 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide">
             Low Stock
           </span>
