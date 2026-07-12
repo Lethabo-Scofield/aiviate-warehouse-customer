@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaSearch, FaSpinner } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 
 const SearchBar = ({ searchTerm, onSearchChange, isLoading = false }) => {
   const [localTerm, setLocalTerm] = useState(searchTerm);
@@ -12,23 +12,22 @@ const SearchBar = ({ searchTerm, onSearchChange, isLoading = false }) => {
   const handleChange = (e) => {
     const value = e.target.value;
     setLocalTerm(value);
-    // Auto-search after typing (with debounce would be better)
     onSearchChange(value);
   };
 
   return (
     <form onSubmit={handleSubmit} className="relative flex-1 md:flex-none">
-      <div className="relative">
-        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+      <div className="relative flex items-center">
+        <FaSearch className="absolute left-3 text-gray-400 text-sm" />
         <input 
           type="text" 
-          placeholder="Search supermarket products..." 
+          placeholder="Search by product name or ID..." 
           value={localTerm}
           onChange={handleChange}
-          className="w-full md:w-72 pl-10 pr-12 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:bg-white focus:border-transparent outline-none transition-all shadow-sm"
+          className="w-full md:w-80 pl-9 pr-8 py-2 bg-white border border-gray-300 rounded text-sm focus:ring-1 focus:ring-brand-700 outline-none transition-colors"
         />
         {isLoading && (
-          <FaSpinner className="absolute right-3 top-1/2 -translate-y-1/2 text-teal-600 animate-spin" />
+          <i className="fas fa-circle-notch fa-spin absolute right-3 text-brand-600 text-sm"></i>
         )}
         {localTerm && !isLoading && (
           <button
@@ -37,7 +36,7 @@ const SearchBar = ({ searchTerm, onSearchChange, isLoading = false }) => {
               setLocalTerm('');
               onSearchChange('');
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 text-gray-400 hover:text-gray-600 text-sm font-bold"
           >
             ✕
           </button>

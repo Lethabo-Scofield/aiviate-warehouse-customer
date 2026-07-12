@@ -11,10 +11,7 @@ import PaymentModal from './components/PaymentModal';
 import LoadingSpinner from './components/LoadingSpinner';
 import Navigation from './components/Navigation';
 import OrderHistory from './pages/OrderHistory';
-import { 
-  FaExclamationTriangle,
-  FaInfoCircle
-} from 'react-icons/fa';
+import { FaExclamationTriangle, FaInfoCircle } from 'react-icons/fa';
 
 // Main App Content (Protected)
 function AppContent() {
@@ -33,7 +30,7 @@ function AppContent() {
   const handleNavigate = (page) => {
     setCurrentPage(page);
     if (page === 'home') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
   };
 
@@ -68,7 +65,6 @@ function AppContent() {
   // Cart operations
   const addToCart = (productId, quantity) => {
     const cartKey = String(productId);
-
     if (quantity <= 0) {
       setCart(prev => {
         const { [cartKey]: _, ...rest } = prev;
@@ -84,7 +80,6 @@ function AppContent() {
 
   const removeFromCart = (productId, quantity = 1) => {
     const cartKey = String(productId);
-
     setCart(prev => {
       const existing = prev[cartKey] || 0;
       const newQty = Math.max(0, existing - quantity);
@@ -126,10 +121,10 @@ function AppContent() {
       setCurrentOrder(null);
       setIsPaymentModalOpen(false);
       
-      alert('🎉 Order confirmed! Check your order history.');
+      alert('Order confirmed.');
       setCurrentPage('orders');
     } catch (error) {
-      alert(`❌ ${error.message || 'There was an error processing your order. Please try again.'}`);
+      alert(`Error processing your order: ${error.message}`);
       console.error('Order error:', error);
       throw error;
     }
@@ -145,20 +140,20 @@ function AppContent() {
 
     // Home page
     if (loading && !isSearching) {
-      return <LoadingSpinner />;
+      return <div className="py-12"><LoadingSpinner /></div>;
     }
 
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <div className="lg:col-span-3">
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex-1 min-w-0">
           {/* Error Banner */}
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6 flex items-center gap-2 text-red-600">
-              <FaExclamationTriangle />
+            <div className="bg-red-50 border border-red-200 rounded p-4 mb-4 flex items-center gap-3 text-red-700">
+              <FaExclamationTriangle className="text-red-500" />
               <span className="text-sm font-medium flex-1">{error}</span>
               <button 
                 onClick={refetch}
-                className="text-sm text-red-700 hover:text-red-900 underline"
+                className="text-sm font-bold text-red-700 hover:underline"
               >
                 Retry
               </button>
@@ -166,40 +161,62 @@ function AppContent() {
           )}
 
           {/* Info Banner */}
-          <div className="bg-cyan-50 border border-cyan-200 rounded-2xl p-3 mb-6 flex items-center gap-2 text-cyan-800 text-sm">
+          <div className="bg-blue-50 border border-blue-200 rounded p-3 mb-4 flex items-center gap-2 text-blue-800 text-sm">
             <FaInfoCircle />
-            <span>Products powered by Open Food Facts · Real product data with images</span>
+            <span>Products powered by Open Food Facts API</span>
+          </div>
+
+          {/* Toolbar */}
+          <div className="bg-white border border-gray-200 p-3 rounded mb-4 flex flex-wrap items-center gap-3 shadow-sm">
+            <SearchBar 
+              searchTerm={searchTerm} 
+              onSearchChange={handleSearch} 
+              isLoading={isSearching}
+            />
+            <CategoryFilter 
+              categories={categories} 
+              selectedCategory={categoryFilter} 
+              onCategoryChange={(category) => {
+                setCategoryFilter(category);
+                if (category === 'All') {
+                  refetch();
+                }
+              }} 
+            />
+            <button 
+              onClick={refetch}
+              className="btn-outline ml-auto"
+              disabled={loading}
+            >
+              <i className={`fas fa-sync-alt mr-2 ${loading ? 'animate-spin' : ''}`}></i>
+              Refresh Catalog
+            </button>
           </div>
 
           {filteredProducts().length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-2xl shadow-lg">
-              <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-xl font-semibold text-gray-700">No products found</h3>
-              <p className="text-gray-400 mt-2">
-                {searchTerm ? `No results for "${searchTerm}"` : 'Try adjusting your filters'}
+            <div className="text-center py-16 bg-white border border-gray-200 rounded">
+              <i className="fas fa-box-open text-4xl text-gray-300 mb-4"></i>
+              <h3 className="text-lg font-bold text-gray-900">No products found</h3>
+              <p className="text-gray-500 mt-1 text-sm">
+                {searchTerm ? `No matches for "${searchTerm}"` : 'Try adjusting your category filter'}
               </p>
               {searchTerm && (
                 <button 
                   onClick={() => handleSearch('')}
-                  className="mt-4 text-teal-700 hover:text-teal-900 underline"
+                  className="mt-4 text-brand-700 hover:underline text-sm font-semibold"
                 >
-                  Clear search
+                  Clear Search
                 </button>
               )}
             </div>
           ) : (
             <>
-              <div className="flex justify-between items-center mb-4">
-                <p className="text-sm text-gray-500">
-                  Showing {filteredProducts().length} products
-                  {searchTerm && ` for "${searchTerm}"`}
-                </p>
-                <span className="text-xs text-gray-400">
-                  <i className="fas fa-check-circle text-green-500 mr-1"></i>
-                  Live data
-                </span>
+              <div className="flex justify-between items-center mb-3 px-1">
+                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">
+                  Product Catalog <span className="text-gray-400 font-normal ml-2">({filteredProducts().length} items)</span>
+                </h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredProducts().map(p => (
                   <ProductCard 
                     key={p.id} 
@@ -212,7 +229,9 @@ function AppContent() {
             </>
           )}
         </div>
-        <div className="lg:col-span-1">
+
+        {/* Sidebar Cart */}
+        <div className="lg:w-80 xl:w-96 flex-shrink-0">
           <CartSummary 
             cart={cart}
             products={products}
@@ -226,7 +245,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/40">
+    <div className="min-h-screen flex flex-col bg-gray-100">
       <Navigation 
         cartCount={cartCount} 
         onNavigate={handleNavigate}
@@ -235,53 +254,17 @@ function AppContent() {
         onLogout={logout}
       />
 
-      <main className="pt-6">
-        {currentPage === 'home' && (
-          <div className="container-custom">
-            <div className="mb-6 flex flex-wrap items-center gap-4">
-              <SearchBar 
-                searchTerm={searchTerm} 
-                onSearchChange={handleSearch} 
-                isLoading={isSearching}
-              />
-              <CategoryFilter 
-                categories={categories} 
-                selectedCategory={categoryFilter} 
-                onCategoryChange={(category) => {
-                  setCategoryFilter(category);
-                  if (category === 'All') {
-                    refetch();
-                  }
-                }} 
-              />
-              <button 
-                onClick={refetch}
-                className="bg-teal-100 hover:bg-teal-200 text-teal-700 px-4 py-2.5 rounded-xl transition-colors text-sm flex items-center gap-2"
-                disabled={loading}
-              >
-                <i className={`fas fa-sync-alt ${loading ? 'animate-spin' : ''}`}></i>
-                <span className="hidden sm:inline">Refresh</span>
-              </button>
-            </div>
-          </div>
-        )}
-        
-        <div className="container-custom">
-          {renderContent()}
-        </div>
+      <main className="flex-1 container-custom py-6">
+        {renderContent()}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white/85 backdrop-blur border-t border-slate-200 mt-12">
-        <div className="container-custom py-6">
-          <div className="text-center text-xs text-gray-400">
-            <p>© 2026 BulkMart Pro. Powered by Open Food Facts API.</p>
-            <p className="mt-1">Data sourced from Open Food Facts - The free open database of food products</p>
-          </div>
+      <footer className="bg-white border-t border-gray-200 mt-auto">
+        <div className="container-custom py-6 text-center text-sm text-gray-500">
+          <p className="font-semibold text-gray-700">BulkMart Pro Wholesale Distributor</p>
+          <p className="mt-1 text-xs">Data sourced from Open Food Facts API</p>
         </div>
       </footer>
 
-      {/* Payment Modal */}
       <PaymentModal 
         isOpen={isPaymentModalOpen}
         onClose={() => {
@@ -298,7 +281,6 @@ function AppContent() {
   );
 }
 
-// Main App with Providers
 function App() {
   return (
     <AuthProvider>
