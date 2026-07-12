@@ -1,20 +1,19 @@
 {
-  "name": "warehouse-ecommerce-root",
-  "version": "1.0.0",
-  "private": true,
+  "name": "workspace",
+  "version": "0.0.0",
+  "license": "MIT",
   "scripts": {
-    "backend:start": "npm --prefix backend start",
-    "backend:dev": "npm --prefix backend run dev",
-    "build": "npm --prefix warehouse-ecommerce install && npm --prefix warehouse-ecommerce run build",
-    "vercel-build": "npm --prefix warehouse-ecommerce install && npm --prefix warehouse-ecommerce run build"
+    "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
+    "build": "pnpm run typecheck && pnpm -r --if-present run build",
+    "typecheck:libs": "tsc --build",
+    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
   },
+  "private": true,
   "dependencies": {
-    "dotenv": "^16.1.4",
-    "pg": "^8.11.2"
+    "@replit/connectors-sdk": "^0.4.1"
   },
   "devDependencies": {
-    "autoprefixer": "^10.5.2",
-    "postcss": "^8.5.16",
-    "tailwindcss": "^4.3.2"
+    "prettier": "^3.9.4",
+    "typescript": "~5.9.3"
   }
 }
