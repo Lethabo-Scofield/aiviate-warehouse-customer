@@ -73,18 +73,18 @@ const ProductCard = ({ product, onAddToCart, cartQuantity }) => {
 
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <div className="flex items-center border border-gray-300 rounded overflow-hidden w-20 h-8">
+              <div className="flex items-center border border-gray-300 rounded overflow-hidden w-24 h-11 shrink-0">
                 <input 
                   type="number" 
                   min={product.minOrder || 1} 
                   value={quantity} 
                   onChange={(e) => setQuantity(Math.max(product.minOrder || 1, parseInt(e.target.value) || 1))}
-                  className="w-full h-full text-center text-sm font-bold outline-none text-gray-900 [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full h-full text-center text-base font-bold outline-none text-gray-900 [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none bg-gray-50"
                 />
               </div>
               <button 
                 onClick={handleAdd}
-                className="flex-1 bg-brand-600 hover:bg-brand-700 text-white h-8 rounded text-sm font-bold transition-colors flex items-center justify-center gap-1"
+                className="flex-1 bg-brand-600 hover:bg-brand-700 text-white h-11 rounded text-sm font-bold transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
                 <i className="fas fa-plus text-xs"></i> ADD
               </button>

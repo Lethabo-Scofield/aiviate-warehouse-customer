@@ -144,7 +144,7 @@ function AppContent() {
     }
 
     return (
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-6 pb-20 lg:pb-0">
         <div className="flex-1 min-w-0">
           {/* Error Banner */}
           {error && (
@@ -167,25 +167,27 @@ function AppContent() {
           </div>
 
           {/* Toolbar */}
-          <div className="bg-white border border-gray-200 p-3 rounded mb-4 flex flex-wrap items-center gap-3 shadow-sm">
+          <div className="bg-white border border-gray-200 p-3 rounded mb-4 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 shadow-sm">
             <SearchBar 
               searchTerm={searchTerm} 
               onSearchChange={handleSearch} 
               isLoading={isSearching}
             />
-            <CategoryFilter 
-              categories={categories} 
-              selectedCategory={categoryFilter} 
-              onCategoryChange={(category) => {
-                setCategoryFilter(category);
-                if (category === 'All') {
-                  refetch();
-                }
-              }} 
-            />
+            <div className="flex gap-2 flex-1 sm:flex-none overflow-x-auto scrollbar-hide pb-1 sm:pb-0">
+              <CategoryFilter 
+                categories={categories} 
+                selectedCategory={categoryFilter} 
+                onCategoryChange={(category) => {
+                  setCategoryFilter(category);
+                  if (category === 'All') {
+                    refetch();
+                  }
+                }} 
+              />
+            </div>
             <button 
               onClick={refetch}
-              className="btn-outline ml-auto"
+              className="btn-outline sm:ml-auto w-full sm:w-auto"
               disabled={loading}
             >
               <i className={`fas fa-sync-alt mr-2 ${loading ? 'animate-spin' : ''}`}></i>
@@ -216,7 +218,7 @@ function AppContent() {
                   Product Catalog <span className="text-gray-400 font-normal ml-2">({filteredProducts().length} items)</span>
                 </h2>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredProducts().map(p => (
                   <ProductCard 
                     key={p.id} 

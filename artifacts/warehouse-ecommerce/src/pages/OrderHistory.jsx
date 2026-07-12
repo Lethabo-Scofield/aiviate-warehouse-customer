@@ -121,22 +121,22 @@ const OrderHistory = ({ orders = [], onUpdateOrderAddress }) => {
         <div className="space-y-6">
           {filteredOrders.map(order => (
             <div key={order.id} className="bg-white border border-gray-200 rounded shadow-sm overflow-hidden">
-              <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 flex flex-wrap justify-between items-center gap-4">
-                <div className="flex gap-6">
-                  <div>
+              <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex flex-wrap gap-4 sm:gap-6 w-full sm:w-auto">
+                  <div className="w-1/2 sm:w-auto">
                     <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Order Placed</p>
                     <p className="text-sm font-medium text-gray-900">{formatDate(order.date)}</p>
                   </div>
-                  <div>
+                  <div className="w-1/2 sm:w-auto">
                     <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Total</p>
                     <p className="text-sm font-medium text-gray-900">${order.total?.toFixed(2) || '0.00'}</p>
                   </div>
-                  <div>
+                  <div className="w-full sm:w-auto mt-2 sm:mt-0">
                     <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Order #</p>
                     <p className="text-sm font-medium text-gray-900">{order.id?.toString().slice(-8).toUpperCase()}</p>
                   </div>
                 </div>
-                <div>
+                <div className="w-full sm:w-auto mt-2 sm:mt-0 flex justify-end">
                   {getStatusBadge(order.status)}
                 </div>
               </div>

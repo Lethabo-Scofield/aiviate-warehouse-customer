@@ -160,7 +160,7 @@ const PaymentModal = ({
               </div>
               
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Search Address</label>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Find on Map (Optional)</label>
                 <AddressPicker
                   value={{
                     address: formData.address, city: formData.city, zip: formData.zip,
@@ -225,17 +225,17 @@ const PaymentModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-overlay bg-gray-900/75">
-      <div className="bg-white rounded-lg w-full max-w-4xl max-h-[95vh] flex flex-col shadow-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white">
-          <h2 className="text-lg font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center lg:p-4 modal-overlay bg-gray-900/75">
+      <div className="bg-white w-full h-[100dvh] lg:h-auto lg:rounded-lg lg:max-w-4xl lg:max-h-[95vh] flex flex-col shadow-2xl overflow-hidden">
+        <div className="px-4 py-4 lg:px-6 border-b border-gray-200 flex justify-between items-center bg-white sticky top-0 z-10 shrink-0">
+          <h2 className="text-lg lg:text-xl font-black text-gray-900 uppercase tracking-widest flex items-center gap-2">
             Secure Checkout
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-900 transition-colors">
-            <FaTimes size={20} />
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-900 transition-colors p-2 -mr-2">
+            <FaTimes size={24} />
           </button>
         </div>
-        <div className="p-6 overflow-y-auto">
+        <div className="p-4 lg:p-6 overflow-y-auto flex-1 bg-white lg:bg-transparent">
           {renderContent()}
         </div>
       </div>

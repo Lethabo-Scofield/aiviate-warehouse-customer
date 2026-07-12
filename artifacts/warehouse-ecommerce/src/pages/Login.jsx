@@ -66,10 +66,10 @@ const Login = ({ onLogin, onRegister, isLoading, error }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <h2 className="text-3xl font-extrabold text-gray-900 flex items-center justify-center gap-2">
-          <i className="fas fa-pallet text-brand-700"></i>
+    <div className="min-h-[100dvh] bg-gray-100 flex flex-col justify-center py-8 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center px-4">
+        <h2 className="text-3xl font-extrabold text-gray-900 flex items-center justify-center gap-3">
+          <i className="fas fa-pallet text-brand-700 text-4xl"></i>
           BulkMart PRO
         </h2>
         <p className="mt-2 text-sm text-gray-600">
@@ -77,8 +77,8 @@ const Login = ({ onLogin, onRegister, isLoading, error }) => {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-200">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md w-full px-4 sm:px-0">
+        <div className="bg-white py-8 px-5 shadow sm:rounded-lg sm:px-10 border border-gray-200 rounded-lg">
           <div className="mb-6 pb-4 border-b border-gray-200 flex justify-between items-center">
             <h3 className="text-lg font-bold text-gray-900">
               {isLogin ? 'Sign In' : 'Create Account'}

@@ -16,18 +16,18 @@ const SearchBar = ({ searchTerm, onSearchChange, isLoading = false }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative flex-1 md:flex-none">
-      <div className="relative flex items-center">
-        <FaSearch className="absolute left-3 text-gray-400 text-sm" />
+    <form onSubmit={handleSubmit} className="relative flex-1 md:flex-none w-full">
+      <div className="relative flex items-center w-full">
+        <FaSearch className="absolute left-4 text-gray-400 text-base" />
         <input 
           type="text" 
-          placeholder="Search by product name or ID..." 
+          placeholder="Search product..." 
           value={localTerm}
           onChange={handleChange}
-          className="w-full md:w-80 pl-9 pr-8 py-2 bg-white border border-gray-300 rounded text-sm focus:ring-1 focus:ring-brand-700 outline-none transition-colors"
+          className="w-full md:w-80 pl-11 pr-10 py-3 sm:py-2 bg-white border border-gray-300 rounded text-base sm:text-sm focus:ring-1 focus:ring-brand-700 outline-none transition-colors h-[48px] sm:h-[44px]"
         />
         {isLoading && (
-          <i className="fas fa-circle-notch fa-spin absolute right-3 text-brand-600 text-sm"></i>
+          <i className="fas fa-circle-notch fa-spin absolute right-4 text-brand-600 text-base"></i>
         )}
         {localTerm && !isLoading && (
           <button
@@ -36,9 +36,9 @@ const SearchBar = ({ searchTerm, onSearchChange, isLoading = false }) => {
               setLocalTerm('');
               onSearchChange('');
             }}
-            className="absolute right-3 text-gray-400 hover:text-gray-600 text-sm font-bold"
+            className="absolute right-4 text-gray-400 hover:text-gray-600 p-2 -mr-2"
           >
-            ✕
+            <i className="fas fa-times text-sm"></i>
           </button>
         )}
       </div>
