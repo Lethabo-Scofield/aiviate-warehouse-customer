@@ -129,7 +129,7 @@ const OrderHistory = ({ orders = [], onUpdateOrderAddress }) => {
                   </div>
                   <div className="w-1/2 sm:w-auto">
                     <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Total</p>
-                    <p className="text-sm font-medium text-gray-900">${order.total?.toFixed(2) || '0.00'}</p>
+                    <p className="text-sm font-medium text-gray-900">R{order.total?.toFixed(2) || '0.00'}</p>
                   </div>
                   <div className="w-full sm:w-auto mt-2 sm:mt-0">
                     <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Order #</p>
@@ -153,10 +153,10 @@ const OrderHistory = ({ orders = [], onUpdateOrderAddress }) => {
                           </div>
                           <div>
                             <p className="font-medium text-gray-900 line-clamp-1">{item.name}</p>
-                            <p className="text-gray-500 text-xs">Qty: {item.quantity} @ ${(item.pricePerUnit || 0).toFixed(2)}</p>
+                            <p className="text-gray-500 text-xs">Qty: {item.quantity} @ R{(item.pricePerUnit || 0).toFixed(2)}</p>
                           </div>
                         </div>
-                        <p className="font-bold text-gray-900">${(item.total || 0).toFixed(2)}</p>
+                        <p className="font-bold text-gray-900">R{(item.total || 0).toFixed(2)}</p>
                       </li>
                     ))}
                   </ul>
