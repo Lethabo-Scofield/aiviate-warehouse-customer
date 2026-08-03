@@ -148,7 +148,7 @@ const PaymentModal = ({
           <section>
             <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">Delivery Information</h4>
             <div className="bg-gray-50 p-4 border border-gray-200 rounded space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Receiver Name</label>
                   <input type="text" name="name" value={formData.name} onChange={handleInputChange} className="input-field py-2" placeholder="Store Contact" />

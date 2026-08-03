@@ -28,8 +28,10 @@ function AppContent() {
 
   // Handle navigation
   const handleNavigate = (page) => {
-    setCurrentPage(page);
-    if (page === 'home') {
+    // The cart lives at the top of the catalog page, so "cart" goes home + top
+    const target = page === 'cart' ? 'home' : page;
+    setCurrentPage(target);
+    if (target === 'home') {
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
   };
@@ -144,7 +146,7 @@ function AppContent() {
     }
 
     return (
-      <div className="flex flex-col lg:flex-row gap-6 pb-20 lg:pb-0">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
         <div className="flex-1 min-w-0">
           {/* Error Banner */}
           {error && (
@@ -173,21 +175,32 @@ function AppContent() {
               onSearchChange={handleSearch} 
               isLoading={isSearching}
             />
-            <div className="flex gap-2 flex-1 sm:flex-none overflow-x-auto scrollbar-hide pb-1 sm:pb-0">
-              <CategoryFilter 
-                categories={categories} 
-                selectedCategory={categoryFilter} 
-                onCategoryChange={(category) => {
-                  setCategoryFilter(category);
-                  if (category === 'All') {
-                    refetch();
-                  }
-                }} 
-              />
+            <div className="flex gap-2 items-stretch flex-1 sm:flex-none">
+              <div className="flex-1 sm:flex-none min-w-0">
+                <CategoryFilter 
+                  categories={categories} 
+                  selectedCategory={categoryFilter} 
+                  onCategoryChange={(category) => {
+                    setCategoryFilter(category);
+                    if (category === 'All') {
+                      refetch();
+                    }
+                  }} 
+                />
+              </div>
+              <button 
+                onClick={refetch}
+                className="btn-outline sm:hidden shrink-0 w-[48px] h-[48px] !p-0 flex items-center justify-center"
+                disabled={loading}
+                aria-label="Refresh catalog"
+                title="Refresh catalog"
+              >
+                <i className={`fas fa-sync-alt ${loading ? 'animate-spin' : ''}`}></i>
+              </button>
             </div>
             <button 
               onClick={refetch}
-              className="btn-outline sm:ml-auto w-full sm:w-auto"
+              className="btn-outline sm:ml-auto !hidden sm:!inline-flex"
               disabled={loading}
             >
               <i className={`fas fa-sync-alt mr-2 ${loading ? 'animate-spin' : ''}`}></i>
@@ -218,7 +231,7 @@ function AppContent() {
                   Product Catalog <span className="text-gray-400 font-normal ml-2">({filteredProducts().length} items)</span>
                 </h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
                 {filteredProducts().map(p => (
                   <ProductCard 
                     key={p.id} 
@@ -232,8 +245,8 @@ function AppContent() {
           )}
         </div>
 
-        {/* Sidebar Cart */}
-        <div className="lg:w-80 xl:w-96 flex-shrink-0">
+        {/* Sidebar Cart — shown first (top) on mobile, right column on desktop */}
+        <div className="order-first lg:order-last lg:w-80 xl:w-96 flex-shrink-0">
           <CartSummary 
             cart={cart}
             products={products}
@@ -254,7 +267,7 @@ function AppContent() {
         currentPage={currentPage}
       />
 
-      <main className="flex-1 container-custom py-6">
+      <main className="flex-1 container-custom my-6">
         {renderContent()}
       </main>
 

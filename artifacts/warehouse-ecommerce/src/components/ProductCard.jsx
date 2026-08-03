@@ -28,7 +28,7 @@ const ProductCard = ({ product, onAddToCart, cartQuantity }) => {
   return (
     <div className="card-retail flex flex-col h-full relative group">
       {/* Product Image Area */}
-      <div className="p-4 border-b border-gray-100 flex justify-center items-center bg-white h-40 relative">
+      <div className="p-3 sm:p-4 border-b border-gray-100 flex justify-center items-center bg-white h-28 sm:h-40 relative">
         <img 
           src={getImageUrl()}
           alt={product.name}
@@ -51,12 +51,12 @@ const ProductCard = ({ product, onAddToCart, cartQuantity }) => {
       </div>
 
       {/* Product Details */}
-      <div className="p-3 flex flex-col flex-1">
-        <div className="flex justify-between items-start mb-1">
-          <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">
+      <div className="p-2.5 sm:p-3 flex flex-col flex-1">
+        <div className="flex justify-between items-start mb-1 gap-1">
+          <p className="text-[11px] sm:text-xs text-gray-500 uppercase tracking-wider font-semibold truncate">
             {product.brand && product.brand !== 'Generic' ? product.brand : 'Wholesale'}
           </p>
-          <span className="text-[10px] text-gray-400 font-mono">
+          <span className="hidden sm:inline text-[10px] text-gray-400 font-mono shrink-0">
             {product.barcode ? `#${product.barcode.slice(-6)}` : `ID:${product.id}`}
           </span>
         </div>
@@ -66,14 +66,14 @@ const ProductCard = ({ product, onAddToCart, cartQuantity }) => {
         </h3>
         
         <div className="mt-auto">
-          <div className="flex items-end gap-1 mb-3">
-            <span className="text-lg font-black text-gray-900">R{(product.pricePerUnit || 0).toFixed(2)}</span>
+          <div className="flex items-end gap-1 mb-2.5 sm:mb-3 flex-wrap">
+            <span className="text-base sm:text-lg font-black text-gray-900">R{(product.pricePerUnit || 0).toFixed(2)}</span>
             <span className="text-xs text-gray-500 mb-1 font-medium">/ {product.unit || 'unit'}</span>
           </div>
 
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <div className="flex items-center border border-gray-300 rounded overflow-hidden w-24 h-11 shrink-0">
+              <div className="flex items-center border border-gray-300 rounded overflow-hidden w-14 sm:w-24 h-10 sm:h-11 shrink-0">
                 <input 
                   type="number" 
                   min={product.minOrder || 1} 
@@ -84,7 +84,7 @@ const ProductCard = ({ product, onAddToCart, cartQuantity }) => {
               </div>
               <button 
                 onClick={handleAdd}
-                className="flex-1 bg-brand-600 hover:bg-brand-700 text-white h-11 rounded text-sm font-bold transition-colors flex items-center justify-center gap-2 shadow-sm"
+                className="flex-1 bg-brand-600 hover:bg-brand-700 text-white h-10 sm:h-11 rounded text-xs sm:text-sm font-bold transition-colors flex items-center justify-center gap-1.5 sm:gap-2 shadow-sm min-w-0"
               >
                 <i className="fas fa-plus text-xs"></i> ADD
               </button>

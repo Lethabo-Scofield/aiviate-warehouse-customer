@@ -16,15 +16,15 @@ const CartSummary = ({ cart, products, onRemoveFromCart, onClearCart, onCheckout
 
   return (
     <>
-      {isExpanded && <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsExpanded(false)} />}
+      {isExpanded && <div className="fixed inset-0 bg-black/50 z-30 lg:hidden" onClick={() => setIsExpanded(false)} />}
       
-      <div className={`bg-white rounded lg:border border-gray-200 lg:shadow-sm flex flex-col transition-all duration-300 ${
+      <div className={`bg-white rounded border border-gray-200 shadow-sm flex flex-col transition-all duration-300 ${
         isExpanded 
-          ? 'fixed bottom-0 left-0 right-0 z-50 h-[85vh] rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.2)]' 
-          : 'fixed bottom-0 left-0 right-0 z-50 h-[68px] lg:sticky lg:top-24 lg:h-auto lg:max-h-[calc(100vh-8rem)] lg:z-auto shadow-[0_-4px_10px_rgba(0,0,0,0.1)] lg:shadow-sm'
+          ? 'fixed top-16 left-0 right-0 z-40 max-h-[80vh] rounded-none rounded-b-2xl shadow-[0_10px_40px_rgba(0,0,0,0.2)] lg:sticky lg:top-24 lg:max-h-[calc(100vh-8rem)] lg:z-auto lg:rounded lg:shadow-sm' 
+          : 'sticky top-16 z-30 h-[60px] lg:top-24 lg:h-auto lg:max-h-[calc(100vh-8rem)] lg:z-auto'
       }`}>
         <div 
-          className="bg-gray-900 text-white p-4 rounded-t-2xl lg:rounded-t lg:rounded-t-none border-b border-gray-800 flex justify-between items-center shrink-0 cursor-pointer lg:cursor-default h-[68px] lg:h-auto"
+          className="bg-gray-900 text-white p-4 lg:rounded-t border-b border-gray-800 flex justify-between items-center shrink-0 cursor-pointer lg:cursor-default h-[60px] lg:h-auto"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <h2 className="font-bold text-base tracking-wide uppercase flex items-center gap-2">
@@ -39,7 +39,7 @@ const CartSummary = ({ cart, products, onRemoveFromCart, onClearCart, onCheckout
               <span>R{total.toFixed(2)}</span>
             </span>
             <div className="lg:hidden text-xl text-gray-400">
-              {isExpanded ? <FaChevronDown /> : <FaChevronUp />}
+              {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
             </div>
           </div>
         </div>
