@@ -1,13 +1,10 @@
 kind = "web"
 previewPath = "/"
 title = "BulkMart Pro"
+description = "A wholesale grocery e-commerce platform for supermarkets and bulk buyers. Lets users browse and search real food products from the Open Food Facts API, add items to a cart, check out with address selection via an interactive map, and view their full order history."
 version = "1.0.0"
 id = "artifacts/warehouse-ecommerce"
 router = "path"
-
-[[integratedSkills]]
-name = "react-vite"
-version = "1.0.0"
 
 [[services]]
 name = "web"
@@ -19,8 +16,8 @@ run = "pnpm --filter @workspace/warehouse-ecommerce run dev"
 
 [services.production]
 build = [ "pnpm", "--filter", "@workspace/warehouse-ecommerce", "run", "build" ]
-publicDir = "artifacts/warehouse-ecommerce/dist/public"
 serve = "static"
+publicDir = "artifacts/warehouse-ecommerce/dist/public"
 
 [[services.production.rewrites]]
 from = "/*"
