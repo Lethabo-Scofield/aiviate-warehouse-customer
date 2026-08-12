@@ -269,6 +269,14 @@ router.post("/", async (req, res) => {
 
     await client.query("COMMIT");
 
+    // Export the order into the fleet/admin system as a delivery stop
+    // (best-effort: a failure here must not break checkout).
+    try {
+      await createDeliveryStop(order, items);
+    } catch (stopError) {
+      console.error("Failed to create fleet delivery stop for order", order.id, stopError);
+    }
+
     return res.status(201).json({ ok: true, order });
   } catch (error) {
     await client.query("ROLLBACK");
@@ -278,6 +286,48 @@ router.post("/", async (req, res) => {
     client.release();
   }
 });
+
+// Fleet company that receives storefront deliveries in the shared database.
+// Matches the convention already present in the stops table (STORE-<id> orders).
+const FLEET_COMPANY_ID = process.env.FLEET_COMPANY_ID || "CMP-DEMO0001";
+
+const createDeliveryStop = async (order: any, items: any[]) => {
+  const totalQuantity = items.reduce(
+    (sum: number, item: any) => sum + (Number(item.quantity) || 1),
+    0
+  );
+
+  const itemsSummary = items
+    .map((item: any) => `${String(item.name || "Item")} x${Number(item.quantity) || 1}`)
+    .join(", ")
+    .slice(0, 500);
+
+  await pool.query(
+    `INSERT INTO stops (
+       id, order_id, customer_name, address, lat, lng,
+       demand, service_time, phone, notes,
+       time_window_start, time_window_end,
+       stop_number, completed, created_at, company_id, status
+     )
+     VALUES (
+       substr(gen_random_uuid()::text, 1, 8), $1, $2, $3, $4, $5,
+       $6, 15, $7, $8,
+       '', '',
+       0, FALSE, NOW(), $9, 'pending'
+     )`,
+    [
+      `STORE-${order.id}`,
+      order.customer_name || `Order ${order.id}`,
+      order.shipping_address || "",
+      order.shipping_latitude !== null ? Number(order.shipping_latitude) : null,
+      order.shipping_longitude !== null ? Number(order.shipping_longitude) : null,
+      totalQuantity,
+      order.customer_phone || "",
+      itemsSummary,
+      FLEET_COMPANY_ID,
+    ]
+  );
+};
 
 router.put("/:id/status", async (req, res) => {
   const client = await pool.connect();

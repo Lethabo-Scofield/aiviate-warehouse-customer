@@ -12,3 +12,4 @@ Shared-schema constraints (admin app owns these tables — additive changes only
 - `users.id` is VARCHAR (no default) and `users.company_id` is NOT NULL. Storefront code must generate ids (`gen_random_uuid()::text`) and always set `company_id` to the dedicated `storefront-buyers` company row (created during schema setup if the `companies` table exists).
 - All storefront FKs to users (`orders.user_id`, `order_status_history.changed_by_user_id`) must be VARCHAR, not BIGINT.
 - Do not add unique constraints or `ON CONFLICT` targets on admin-owned tables (e.g. users.email uniqueness is not guaranteed there); check existence with SELECT first.
+- Checkout exports each order into the fleet system as a `stops` row: `order_id = 'STORE-<orderId>'`, notes = item summary, demand = total qty, `company_id` from `FLEET_COMPANY_ID` env (default `CMP-DEMO0001`, matching pre-existing data). The stop insert is best-effort after commit — it must never fail checkout.
