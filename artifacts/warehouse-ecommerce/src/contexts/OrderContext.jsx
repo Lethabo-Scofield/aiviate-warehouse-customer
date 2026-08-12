@@ -52,19 +52,11 @@ export const OrderProvider = ({ children }) => {
   }, [normalizeOrder]);
 
   // Load orders from localStorage on mount
+  // Orders are server-backed only. Clear the legacy localStorage cache that
+  // used to merge stale (pre-database) orders into the list.
   useEffect(() => {
-    const savedOrders = localStorage.getItem('orderHistory');
-    if (savedOrders) {
-      try {
-        const parsed = JSON.parse(savedOrders);
-        if (Array.isArray(parsed)) {
-          setOrders(parsed.map(normalizeOrder));
-        }
-      } catch (e) {
-        console.error('Error loading orders from localStorage:', e);
-      }
-    }
-  }, [normalizeOrder]);
+    localStorage.removeItem('orderHistory');
+  }, []);
 
   useEffect(() => {
     const loadBackendOrders = async () => {
@@ -87,11 +79,6 @@ export const OrderProvider = ({ children }) => {
 
     loadBackendOrders();
   }, [isAuthenticated, mergeOrders]);
-
-  // Save orders to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('orderHistory', JSON.stringify(orders));
-  }, [orders]);
 
   // Add a new order
   const addOrder = async (orderData) => {
