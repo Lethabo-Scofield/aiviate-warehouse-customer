@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { pool } from "../lib/pool";
+import { STOREFRONT_COMPANY_ID } from "./legacy-schema";
 
 const demoUser = {
   name: "Demo Buyer",
@@ -56,19 +57,31 @@ const defaultProducts = [
 ];
 
 export const seedDatabase = async () => {
-  const existingDemo = await pool.query(
-    "SELECT id FROM users WHERE email = $1",
-    [demoUser.email]
-  );
+  // Serialize check-then-insert (shared users table has no unique email).
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [demoUser.email]);
 
-  if (existingDemo.rows.length === 0) {
-    const passwordHash = await bcrypt.hash(demoUser.password, 10);
-    await pool.query(
-      `INSERT INTO users (name, company, phone, email, password_hash)
-       VALUES ($1, $2, $3, $4, $5)
-       ON CONFLICT (email) DO NOTHING`,
-      [demoUser.name, demoUser.company, demoUser.phone, demoUser.email, passwordHash]
+    const existingDemo = await client.query(
+      "SELECT id FROM users WHERE email = $1",
+      [demoUser.email]
     );
+
+    if (existingDemo.rows.length === 0) {
+      const passwordHash = await bcrypt.hash(demoUser.password, 10);
+      await client.query(
+        `INSERT INTO users (id, name, company, phone, email, password_hash, role, company_id)
+         VALUES (gen_random_uuid()::text, $1, $2, $3, $4, $5, 'buyer', $6)`,
+        [demoUser.name, demoUser.company, demoUser.phone, demoUser.email, passwordHash, STOREFRONT_COMPANY_ID]
+      );
+    }
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK").catch(() => {});
+    throw error;
+  } finally {
+    client.release();
   }
 
   for (const category of defaultCategories) {

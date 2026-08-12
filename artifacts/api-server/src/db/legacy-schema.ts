@@ -22,19 +22,49 @@ export const createSchema = async () => {
   }
 };
 
+// Company id used for storefront-registered buyers in the shared database
+// (users.company_id is NOT NULL there and is read by the owner's admin app).
+export const STOREFRONT_COMPANY_ID = "storefront-buyers";
+
 const runSchemaSetup = async () => {
+  // The shared store database (admin app) already defines users with
+  // VARCHAR ids and a required company_id. Match that shape on fresh DBs.
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
-      id BIGSERIAL PRIMARY KEY,
-      email TEXT UNIQUE NOT NULL,
-      password_hash TEXT NOT NULL,
-      name TEXT NOT NULL,
-      company TEXT,
-      phone TEXT,
-      role TEXT NOT NULL DEFAULT 'buyer',
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      email VARCHAR UNIQUE NOT NULL,
+      password_hash VARCHAR NOT NULL,
+      name VARCHAR NOT NULL,
+      role VARCHAR DEFAULT 'buyer',
+      company_id VARCHAR NOT NULL DEFAULT '${STOREFRONT_COMPANY_ID}',
+      created_at TIMESTAMP DEFAULT NOW()
     )
+  `);
+
+  // Additive columns the storefront uses; safe no-ops on the shared DB.
+  await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS company TEXT`);
+  await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS phone TEXT`);
+  await pool.query(
+    `ALTER TABLE users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()`,
+  );
+
+  // Ensure the storefront's company row exists when the shared companies
+  // table is present (users.company_id references it logically).
+  await pool.query(`
+    DO $$
+    BEGIN
+      IF EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_name = 'companies'
+      ) THEN
+        IF NOT EXISTS (SELECT 1 FROM companies WHERE id = '${STOREFRONT_COMPANY_ID}') THEN
+          INSERT INTO companies (id, name, created_at)
+          VALUES ('${STOREFRONT_COMPANY_ID}', 'BulkMart Storefront Buyers', NOW());
+        END IF;
+      END IF;
+    EXCEPTION WHEN others THEN
+      RAISE NOTICE 'Skipping storefront company seed: %', SQLERRM;
+    END $$;
   `);
 
   await pool.query(`
@@ -64,7 +94,7 @@ const runSchemaSetup = async () => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS orders (
       id BIGSERIAL PRIMARY KEY,
-      user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      user_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       customer_name TEXT,
       customer_email TEXT,
       customer_phone TEXT,
@@ -81,7 +111,7 @@ const runSchemaSetup = async () => {
   `);
 
   // Backward compatibility for older deployments that already created a legacy orders table.
-  await pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS user_id BIGINT`);
+  await pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS user_id VARCHAR`);
   await pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_name TEXT`);
   await pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_email TEXT`);
   await pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_phone TEXT`);
@@ -124,9 +154,29 @@ const runSchemaSetup = async () => {
     END $$;
   `);
 
+  // Fail fast if a legacy orders table has an ID type incompatible with
+  // users.id — silently skipping the FK would let order inserts fail later.
   await pool.query(`
     DO $$
+    DECLARE
+      orders_type TEXT;
+      users_type TEXT;
     BEGIN
+      SELECT c.udt_name INTO orders_type
+      FROM information_schema.columns c
+      WHERE c.table_schema = 'public' AND c.table_name = 'orders' AND c.column_name = 'user_id';
+
+      SELECT c.udt_name INTO users_type
+      FROM information_schema.columns c
+      WHERE c.table_schema = 'public' AND c.table_name = 'users' AND c.column_name = 'id';
+
+      IF orders_type IS DISTINCT FROM users_type
+         AND NOT (orders_type IN ('varchar', 'text') AND users_type IN ('varchar', 'text')) THEN
+        RAISE EXCEPTION
+          'orders.user_id type (%) is incompatible with users.id type (%); manual migration required',
+          orders_type, users_type;
+      END IF;
+
       IF NOT EXISTS (
         SELECT 1
         FROM information_schema.table_constraints
@@ -160,7 +210,7 @@ const runSchemaSetup = async () => {
       previous_status TEXT,
       new_status TEXT NOT NULL,
       note TEXT,
-      changed_by_user_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
+      changed_by_user_id VARCHAR REFERENCES users(id) ON DELETE SET NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `);
